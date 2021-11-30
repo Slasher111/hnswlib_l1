@@ -1,5 +1,6 @@
 #pragma once
 #include "hnswlib.h"
+#include <cstdlib>
 
 namespace hnswlib {
 
@@ -14,7 +15,8 @@ namespace hnswlib {
             float t = *pVect1 - *pVect2;
             pVect1++;
             pVect2++;
-            res += t * t;
+            res += fabs(t);
+            //res += t * t;
         }
         return (res);
     }
@@ -173,17 +175,7 @@ namespace hnswlib {
         size_t dim_;
     public:
         L2Space(size_t dim) {
-            fstdistfunc_ = L2Sqr;
-        #if defined(USE_SSE) || defined(USE_AVX)
-            if (dim % 16 == 0)
-                fstdistfunc_ = L2SqrSIMD16Ext;
-            else if (dim % 4 == 0)
-                fstdistfunc_ = L2SqrSIMD4Ext;
-            else if (dim > 16)
-                fstdistfunc_ = L2SqrSIMD16ExtResiduals;
-            else if (dim > 4)
-                fstdistfunc_ = L2SqrSIMD4ExtResiduals;
-        #endif
+            fstdistfunc_ = L2Sqr;        
             dim_ = dim;
             data_size_ = dim * sizeof(float);
         }
